@@ -1,6 +1,9 @@
 {
   "tasks": {
-    "dev": "deno run --watch -A ./src/main.ts"
+    "dev": "deno run --watch -A ./src/main.ts",
+    "prisma:db-push": "deno run -A npm:prisma@5.3.1 db push",
+    "prisma:generate": "deno run -A npm:prisma@5.3.1 generate ",
+    "prisma:seed": "deno run -A ./prisma/seed.ts",
   },
   "fmt": {
     "singleQuote": true,

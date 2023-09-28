@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["deno"]
+  output = "../generated/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Bank information
+model Bank {
+  id          Int       @id  @default(autoincrement())
+  name        String         @unique
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  products    BankProduct[]
+}
+
+model BankProduct {
+  id         Int                    @id  @default(autoincrement())
+  name       String                      @unique
+  status     String                      @default("active")
+  interest   Float                       @default(0)
+  bank       Bank                        @relation(fields: [bankId], references: [id])
+  bankId     Int
+  createdAt  DateTime                    @default(now())
+  updatedAt  DateTime                    @updatedAt
+  payments   BankProductPayment[]
+}
+
+model BankProductPayment {
+  id              Int       @id   @default(autoincrement())
+  amount          Int             @default(0)
+  date            DateTime
+  notes           String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  bankProduct     BankProduct     @relation(fields: [bankProductId], references: [id])
+  bankProductId   Int
+  source          PaymentSource?   @relation(fields: [sourceId], references: [id])
+  sourceId Int?
+}
+
+model PaymentSource {
+  id                  Int                     @id   @default(autoincrement())
+  name                String                        @unique
+  createdAt           DateTime                      @default(now())
+  updatedAt           DateTime                      @updatedAt
+  BankProductPayment  BankProductPayment[]
+}
